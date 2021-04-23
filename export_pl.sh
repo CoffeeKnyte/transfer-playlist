@@ -21,11 +21,11 @@ for j in "${export_id[@]}"; do
      for k in "${!rating_keys[@]}"; do item_guid[$k]=$($sqplex "$export_db" "SELECT guid FROM metadata_items WHERE id = ${rating_keys[$k]};"); printf "\"${item_guid[$k]}\" "; done >> "$foldername/$filename.sav"
      printf ")\n" >> "$foldername/$filename.sav"
      #echo $lib_ids
-     printf "lib_ids=( " >> "$foldername/$filename.sav"
+     printf "lib_names=( " >> "$foldername/$filename.sav"
      for k in "${!rating_keys[@]}"; do 
 		lib_ids[$k]=$($sqplex "$export_db" "SELECT library_section_id FROM metadata_items WHERE id = ${rating_keys[$k]};")
-		#lib_names[$k]=$($sqplex "$export_db" "SELECT name FROM library_sections WHERE id = ${lib_ids[$k]};")
-		printf "\"${lib_ids[$k]}\" "; done >> "$foldername/$filename.sav"
+		lib_names[$k]=$($sqplex "$export_db" "SELECT name FROM library_sections WHERE id = ${lib_ids[$k]};")
+		printf "\"${lib_names[$k]}\" "; done >> "$foldername/$filename.sav"
      printf ")\n" >> "$foldername/$filename.sav"
      sed -i 's/ = /=/g' "$foldername/$filename.sav"
    fi
