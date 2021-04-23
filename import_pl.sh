@@ -1,7 +1,7 @@
 #!/bin/bash
 
-tv_lib=1
-mov_lib=4
+#tv_lib=1
+#mov_lib=4
 sqplex="/opt/plexsql/PMS --sqlite"
 plexbase="/opt/plex_db_backups/plexbase.db"
 
@@ -27,7 +27,8 @@ do
    echo "INSERT INTO metadata_item_accounts VALUES($row_accounts,$account_id,$playlist_id);" >> import_metadata_item_accounts.sql
    for k in "${!item_guid[@]}"
    do
-      ratingkey=$($sqplex $plexbase "SELECT id FROM metadata_items WHERE guid = '${item_guid[$k]}' AND (library_section_id = $tv_lib OR library_section_id = $mov_lib);")
+      lib_ids[$k]=$($sqplex "$export_db" "SELECT id FROM library_sections WHERE name = '${lib_names[$k]}';")
+      ratingkey=$($sqplex $plexbase "SELECT id FROM metadata_items WHERE guid = '${item_guid[$k]}' AND (library_section_id = ${lib_ids[$k]});")
 	  if [ ! -z "$ratingkey" ]; then
 	    echo "INSERT INTO play_queue_generators VALUES($row_playq,$playlist_id,$ratingkey,'',NULL,NULL,$(((k+1)*1000)),'2021-03-17 06:59:21','2021-03-17 06:59:21',7596568095033486089,NULL,NULL,'');" >> import_playq.sql
 	    let "row_playq++"
